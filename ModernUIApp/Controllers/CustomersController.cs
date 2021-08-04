@@ -8,31 +8,21 @@ using Microsoft.AspNetCore.Mvc;
 using ModernUIApp.Models;
 using Newtonsoft.Json;
 using Microsoft.Extensions.Configuration;
+using ModernUIApp.Services;
 
 namespace ModernUIApp.Controllers
 {
     public class CustomersController : Controller
     {
-        private HttpClient _customersApiClient;
-        private string _customerApiUrl;
-        public CustomersController(IConfiguration configuration)
+        private ICustomerDataService _customerDataService;
+        public CustomersController(ICustomerDataService customerDataService)
         {
-            _customersApiClient = new HttpClient();
-            _customerApiUrl = configuration.GetValue<string>("ApiURL");
+            _customerDataService = customerDataService;
         }
         public IActionResult Index()
         {
-            var customers = getCustomersFromApi();
+            var customers = _customerDataService.GetAll();
             return View(customers);
-        }
-        private List<Customer> getCustomersFromApi()
-        {
-            
-            HttpResponseMessage response = _customersApiClient.GetAsync(_customerApiUrl).Result;
-            response.EnsureSuccessStatusCode();
-            string jsonResponse = response.Content.ReadAsStringAsync().Result;
-            var customers = JsonConvert.DeserializeObject<List<Customer>>(jsonResponse);
-            return customers;
         }
     }
 }

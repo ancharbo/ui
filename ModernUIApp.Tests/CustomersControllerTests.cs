@@ -8,27 +8,28 @@ using System.IO;
 using ModernUIApp.Controllers;
 using Microsoft.AspNetCore.Mvc;
 using ModernUIApp.Models;
+using ModernUIApp.Services;
+using Microsoft.Extensions.DependencyInjection;
+using ModernUIApp.Tests.Mocks;
 
 namespace ModernUIApp.Tests {
     [TestClass]
     public class CustomersControllerTests {
-        private readonly HttpClient _client;
-        private IConfigurationRoot _configuration;
+        private ICustomerDataService _customerDataService;
         public CustomersControllerTests () {
             // Arrange
-            _client = new HttpClient ();
-            _configuration = new ConfigurationBuilder ()
-                .SetBasePath (Directory.GetCurrentDirectory ())
-                .AddJsonFile ("appsettings.json")
-                .Build ();
+            var services = new ServiceCollection();
+            services.AddTransient<ICustomerDataService, MockCustomerDataService>();
+            var serviceProvider = services.BuildServiceProvider();
 
+            _customerDataService = serviceProvider.GetService<ICustomerDataService>();
         }
 
-        [TestCategory ("L1")]
+        [TestCategory ("L0")]
         [TestMethod]
         public void Index__ShouldReturnAViewContainingAListOfCustomersSortedAlphabetically () {
             //Arrange
-            var customersControllerUnderTest = new CustomersController (_configuration);
+            var customersControllerUnderTest = new CustomersController (_customerDataService);
             //Act
             var returnedResult = customersControllerUnderTest.Index ();
             // Assert
