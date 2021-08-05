@@ -20,5 +20,6 @@ COPY --from=publish /app/publish .
 
 ENV ApiURL http://modernapiapp/api/customers
 ENV ASPNETCORE_ENVIRONMENT Development
+ENV LaunchDarklyKey sdk-29ef8376-d029-4b4a-958a-86c40f100da6
 
 ENTRYPOINT ["dotnet", "ModernUIApp.dll"]

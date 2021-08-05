@@ -16,20 +16,23 @@ namespace ModernUIApp.Tests {
     [TestClass]
     public class CustomersControllerTests {
         private ICustomerDataService _customerDataService;
+        private IFeatureFlagService _featureFlagService;
         public CustomersControllerTests () {
             // Arrange
             var services = new ServiceCollection();
             services.AddTransient<ICustomerDataService, MockCustomerDataService>();
+            services.AddTransient<IFeatureFlagService, MockFeaureFlagService>();
             var serviceProvider = services.BuildServiceProvider();
 
             _customerDataService = serviceProvider.GetService<ICustomerDataService>();
+            _featureFlagService = serviceProvider.GetService<IFeatureFlagService>();
         }
 
         [TestCategory ("L0")]
         [TestMethod]
         public void Index__ShouldReturnAViewContainingAListOfCustomersSortedAlphabetically () {
             //Arrange
-            var customersControllerUnderTest = new CustomersController (_customerDataService);
+            var customersControllerUnderTest = new CustomersController(_customerDataService, _featureFlagService);
             //Act
             var returnedResult = customersControllerUnderTest.Index ();
             // Assert

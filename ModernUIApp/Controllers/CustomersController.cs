@@ -15,14 +15,24 @@ namespace ModernUIApp.Controllers
     public class CustomersController : Controller
     {
         private ICustomerDataService _customerDataService;
-        public CustomersController(ICustomerDataService customerDataService)
+        private IFeatureFlagService _featureFlagService;
+        private string _userName = "a.ndrew.charbonneau@microsoft.com";
+        public CustomersController(ICustomerDataService customerDataService, IFeatureFlagService featureFlagService)
         {
             _customerDataService = customerDataService;
+            _featureFlagService = featureFlagService;
         }
         public IActionResult Index()
         {
-            var customers = _customerDataService.GetAll();
-            return View(customers);
+            if (_featureFlagService.ViewFeature(_userName))
+            {
+                var customers = _customerDataService.GetAll();
+                return View(customers);
+            }
+            else
+            {
+                return View("~/Views/ComingSoon/Index.cshtml");
+            }
         }
     }
 }
